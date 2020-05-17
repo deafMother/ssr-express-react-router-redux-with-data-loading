@@ -10,3 +10,13 @@ export const fetchUsers = () => async (dispatch, getSate, api) => {
     payload: res,
   });
 };
+
+export const FETCH_CURRENT_USER = "fetch-current-user";
+export const fetchCurrentUser = () => async (dispatch, getSate, api) => {
+  const res = await api.get("/current_user");
+
+  dispatch({
+    type: FETCH_CURRENT_USER,
+    payload: res,
+  });
+};

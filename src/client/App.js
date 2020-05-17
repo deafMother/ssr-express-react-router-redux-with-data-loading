@@ -1,11 +1,13 @@
 import React from "react";
 import { renderRoutes } from "react-router-config";
+import Header from "./components/Header";
+import { fetchCurrentUser } from "./actions";
 
 // route routes are the components matched by the routes component depending on the path
 const App = ({ route }) => {
   return (
     <div>
-      <h1>Im a header</h1>
+      <Header />
       {renderRoutes(route.routes)}
     </div>
   );
@@ -13,4 +15,5 @@ const App = ({ route }) => {
 
 export default {
   component: App,
+  loadData: ({ dispatch }) => dispatch(fetchCurrentUser()),
 };
