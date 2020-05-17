@@ -1,5 +1,6 @@
 import React from "react";
 
+import App from "./App";
 import HomePage from "./pages/HomePage";
 import UsersListPage from "./pages/UsersListPage";
 
@@ -8,12 +9,17 @@ import UsersListPage from "./pages/UsersListPage";
 // each object represents one route
 export default [
   {
-    path: "/",
-    ...HomePage,
-    exact: true,
-  },
-  {
-    path: "/users",
-    ...UsersListPage,
+    ...App, // the app will always  be displayed to the screen as we have not tied any path to it
+    routes: [
+      {
+        path: "/",
+        ...HomePage,
+        exact: true,
+      },
+      {
+        path: "/users",
+        ...UsersListPage,
+      },
+    ],
   },
 ];

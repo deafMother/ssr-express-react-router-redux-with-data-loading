@@ -124,3 +124,13 @@
 - > to solve this add two additional steps along with html we will dump the store data as JSON into the html template.
 
 - > now when the react app boots up in the client side it will have an initial state supplied by the server
+
+## eleven (cookie issue)
+
+- > during server side rendering the browser send the cookie to the renderer server and not the api server so the renderer has to send the cookie to the api n=on behalf of the client
+
+- > during normal react app functioning on the client side the browser will interact directly with the api server via the proxy setting
+
+- > the issue is too detect if we are server rendering or performing cient follow up request
+
+- > to solve this we make separate custom axios instances for client and server requests

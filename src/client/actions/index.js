@@ -1,9 +1,9 @@
-import axios from "axios";
+// this is making of the axios instance
 
 export const FET_USERS = "fetch_users";
 
-export const fetchUsers = () => async (dispatch) => {
-  const res = await axios.get("https://react-ssr-api.herokuapp.com/users");
+export const fetchUsers = () => async (dispatch, getSate, api) => {
+  const res = await api.get("/users");
 
   dispatch({
     type: FET_USERS,
