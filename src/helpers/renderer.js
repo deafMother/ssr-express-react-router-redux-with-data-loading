@@ -8,11 +8,12 @@ import { renderRoutes } from "react-router-config"; // this is used for routing 
 import serialize from "serialize-javascript"; // works like JSON stringfy but prevents xss attackks
 import Routes from "../client/Routets";
 
-export default (req, store) => {
+export default (req, store, context) => {
   /*
   note: we are sending HTML code and not states and no JS like in normal react apps
   so we need to hydrate  and have sencond client bundle
   */
+  // context: will be passed as a prop down to all its rendered components
   // static router must be given the  current url
   // note: when a particular page(component) is being rendered server side the life cycle of
   // that component doesnt execute as we are fetching only the html
@@ -21,7 +22,7 @@ export default (req, store) => {
   // we need to use additional settings to make this behaviour in the server side
   const content = renderToString(
     <Provider store={store}>
-      <StaticRouter location={req.path} context={{}}>
+      <StaticRouter location={req.path} context={context}>
         <div>{renderRoutes(Routes)}</div>
       </StaticRouter>
     </Provider>

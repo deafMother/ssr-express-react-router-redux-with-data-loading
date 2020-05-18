@@ -71,68 +71,6 @@ module.exports = require("react");
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-module.exports = require("react-router-config");
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-module.exports = require("react-router-dom");
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _App = __webpack_require__(11);
-
-var _App2 = _interopRequireDefault(_App);
-
-var _HomePage = __webpack_require__(13);
-
-var _HomePage2 = _interopRequireDefault(_HomePage);
-
-var _UsersListPage = __webpack_require__(14);
-
-var _UsersListPage2 = _interopRequireDefault(_UsersListPage);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// a we are using server side data loading
-// so we must use an array of paths and not the traditional react router approach
-// each object represents one route
-exports.default = [_extends({}, _App2.default, { // the app will always  be displayed to the screen as we have not tied any path to it
-  routes: [_extends({
-    path: "/"
-  }, _HomePage2.default, {
-    exact: true
-  }), _extends({
-    path: "/users"
-  }, _UsersListPage2.default)]
-})];
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports = require("react-redux");
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -218,6 +156,72 @@ var fetchCurrentUser = exports.fetchCurrentUser = function fetchCurrentUser() {
 };
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = require("react-router-config");
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = require("react-router-dom");
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports = require("react-redux");
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _App = __webpack_require__(11);
+
+var _App2 = _interopRequireDefault(_App);
+
+var _HomePage = __webpack_require__(13);
+
+var _HomePage2 = _interopRequireDefault(_HomePage);
+
+var _UsersListPage = __webpack_require__(14);
+
+var _UsersListPage2 = _interopRequireDefault(_UsersListPage);
+
+var _NotFoundPage = __webpack_require__(24);
+
+var _NotFoundPage2 = _interopRequireDefault(_NotFoundPage);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// a we are using server side data loading
+// so we must use an array of paths and not the traditional react router approach
+// each object represents one route
+exports.default = [_extends({}, _App2.default, { // the app will always  be displayed to the screen as we have not tied any path to it
+  routes: [_extends({
+    path: "/"
+  }, _HomePage2.default, {
+    exact: true
+  }), _extends({
+    path: "/users"
+  }, _UsersListPage2.default), _extends({}, _NotFoundPage2.default)]
+})];
+
+/***/ }),
 /* 6 */
 /***/ (function(module, exports) {
 
@@ -236,13 +240,13 @@ var _express = __webpack_require__(9);
 
 var _express2 = _interopRequireDefault(_express);
 
-var _reactRouterConfig = __webpack_require__(1);
+var _reactRouterConfig = __webpack_require__(2);
 
 var _expressHttpProxy = __webpack_require__(10);
 
 var _expressHttpProxy2 = _interopRequireDefault(_expressHttpProxy);
 
-var _Routets = __webpack_require__(3);
+var _Routets = __webpack_require__(5);
 
 var _Routets2 = _interopRequireDefault(_Routets);
 
@@ -290,7 +294,13 @@ app.get("*", function (req, res) {
 
   Promise.all(promises).then(function () {
     // after all the data loading functions are finished we render the  components
-    res.send((0, _renderer2.default)(req, store));
+    var context = {};
+    var content = (0, _renderer2.default)(req, store, context);
+    // context is send to the rendered component as a prop and any changes there will be avaiable here
+    if (context.notFound) {
+      res.status(404);
+    }
+    res.send(content);
   });
 });
 
@@ -333,13 +343,13 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRouterConfig = __webpack_require__(1);
+var _reactRouterConfig = __webpack_require__(2);
 
 var _Header = __webpack_require__(12);
 
 var _Header2 = _interopRequireDefault(_Header);
 
-var _actions = __webpack_require__(5);
+var _actions = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -378,7 +388,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRouterDom = __webpack_require__(2);
+var _reactRouterDom = __webpack_require__(3);
 
 var _reactRedux = __webpack_require__(4);
 
@@ -445,7 +455,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRouterDom = __webpack_require__(2);
+var _reactRouterDom = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -505,7 +515,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = __webpack_require__(4);
 
-var _actions = __webpack_require__(5);
+var _actions = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -592,28 +602,29 @@ var _react2 = _interopRequireDefault(_react);
 
 var _server = __webpack_require__(16);
 
-var _reactRouterDom = __webpack_require__(2);
+var _reactRouterDom = __webpack_require__(3);
 
 var _reactRedux = __webpack_require__(4);
 
-var _reactRouterConfig = __webpack_require__(1);
+var _reactRouterConfig = __webpack_require__(2);
 
 var _serializeJavascript = __webpack_require__(17);
 
 var _serializeJavascript2 = _interopRequireDefault(_serializeJavascript);
 
-var _Routets = __webpack_require__(3);
+var _Routets = __webpack_require__(5);
 
 var _Routets2 = _interopRequireDefault(_Routets);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // this is used for routing if we do server side data fetching
-exports.default = function (req, store) {
+exports.default = function (req, store, context) {
   /*
   note: we are sending HTML code and not states and no JS like in normal react apps
   so we need to hydrate  and have sencond client bundle
   */
+  // context: will be passed as a prop down to all its rendered components
   // static router must be given the  current url
   // note: when a particular page(component) is being rendered server side the life cycle of
   // that component doesnt execute as we are fetching only the html
@@ -625,7 +636,7 @@ exports.default = function (req, store) {
     { store: store },
     _react2.default.createElement(
       _reactRouterDom.StaticRouter,
-      { location: req.path, context: {} },
+      { location: req.path, context: context },
       _react2.default.createElement(
         "div",
         null,
@@ -744,7 +755,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _actions = __webpack_require__(5);
+var _actions = __webpack_require__(1);
 
 exports.default = function () {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
@@ -783,7 +794,42 @@ exports.default = function () {
   }
 };
 
-var _actions = __webpack_require__(5);
+var _actions = __webpack_require__(1);
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//staticCotext is the context passed by static router only available during the server render side
+
+var NotFoundPage = function NotFoundPage(_ref) {
+  var _ref$staticContext = _ref.staticContext,
+      staticContext = _ref$staticContext === undefined ? {} : _ref$staticContext;
+
+  staticContext.notFound = true;
+  return _react2.default.createElement(
+    "h1",
+    null,
+    "Opps, route not found"
+  );
+};
+
+exports.default = {
+  component: NotFoundPage
+};
 
 /***/ })
 /******/ ]);
