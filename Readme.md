@@ -134,3 +134,14 @@
 - > the issue is too detect if we are server rendering or performing cient follow up request
 
 - > to solve this we make separate custom axios instances for client and server requests
+
+## twelve (handling unkonwn routes and errors)
+
+- > handle errors and redirect on errors
+- > make an hoc in client side to detect login, in server we need to use redirect
+
+## thirteen (adding meta tags for better SEO)
+
+- > use the open graph protocol
+
+- > use react helmet (note the set up for the server side is a bit different then the client side: first create the hemet tage and then dump to the HTML template)

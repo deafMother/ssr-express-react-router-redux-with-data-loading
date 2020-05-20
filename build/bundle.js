@@ -194,7 +194,7 @@ var fetchAdmins = exports.fetchAdmins = function fetchAdmins() {
 /* 2 */
 /***/ (function(module, exports) {
 
-module.exports = require("react-router-config");
+module.exports = require("react-redux");
 
 /***/ }),
 /* 3 */
@@ -206,7 +206,7 @@ module.exports = require("react-router-dom");
 /* 4 */
 /***/ (function(module, exports) {
 
-module.exports = require("react-redux");
+module.exports = require("react-router-config");
 
 /***/ }),
 /* 5 */
@@ -237,11 +237,11 @@ var _UsersListPage = __webpack_require__(14);
 
 var _UsersListPage2 = _interopRequireDefault(_UsersListPage);
 
-var _NotFoundPage = __webpack_require__(24);
+var _NotFoundPage = __webpack_require__(15);
 
 var _NotFoundPage2 = _interopRequireDefault(_NotFoundPage);
 
-var _AdminPage = __webpack_require__(26);
+var _AdminPage = __webpack_require__(16);
 
 var _AdminPage2 = _interopRequireDefault(_AdminPage);
 
@@ -281,7 +281,7 @@ var _express = __webpack_require__(9);
 
 var _express2 = _interopRequireDefault(_express);
 
-var _reactRouterConfig = __webpack_require__(2);
+var _reactRouterConfig = __webpack_require__(4);
 
 var _expressHttpProxy = __webpack_require__(10);
 
@@ -291,11 +291,11 @@ var _Routets = __webpack_require__(5);
 
 var _Routets2 = _interopRequireDefault(_Routets);
 
-var _renderer = __webpack_require__(15);
+var _renderer = __webpack_require__(18);
 
 var _renderer2 = _interopRequireDefault(_renderer);
 
-var _createStore = __webpack_require__(18);
+var _createStore = __webpack_require__(21);
 
 var _createStore2 = _interopRequireDefault(_createStore);
 
@@ -393,7 +393,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRouterConfig = __webpack_require__(2);
+var _reactRouterConfig = __webpack_require__(4);
 
 var _Header = __webpack_require__(12);
 
@@ -440,7 +440,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouterDom = __webpack_require__(3);
 
-var _reactRedux = __webpack_require__(4);
+var _reactRedux = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -563,9 +563,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRedux = __webpack_require__(4);
+var _reactRedux = __webpack_require__(2);
 
 var _actions = __webpack_require__(1);
+
+var _reactHelmet = __webpack_require__(28);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -601,11 +603,27 @@ var UsersList = function (_Component) {
       });
     }
   }, {
+    key: "head",
+    value: function head() {
+      return _react2.default.createElement(
+        _reactHelmet.Helmet,
+        null,
+        _react2.default.createElement(
+          "title",
+          null,
+          this.props.users.length + " Users Loaded",
+          " "
+        ),
+        _react2.default.createElement("meta", { property: "og:title", content: "My SSR App" })
+      );
+    }
+  }, {
     key: "render",
     value: function render() {
       return _react2.default.createElement(
         "div",
         null,
+        this.head(),
         "Here's a list of users",
         _react2.default.createElement(
           "ul",
@@ -650,222 +668,6 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _server = __webpack_require__(16);
-
-var _reactRouterDom = __webpack_require__(3);
-
-var _reactRedux = __webpack_require__(4);
-
-var _reactRouterConfig = __webpack_require__(2);
-
-var _serializeJavascript = __webpack_require__(17);
-
-var _serializeJavascript2 = _interopRequireDefault(_serializeJavascript);
-
-var _Routets = __webpack_require__(5);
-
-var _Routets2 = _interopRequireDefault(_Routets);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// this is used for routing if we do server side data fetching
-exports.default = function (req, store, context) {
-  /*
-  note: we are sending HTML code and not states and no JS like in normal react apps
-  so we need to hydrate  and have sencond client bundle
-  */
-  // context: will be passed as a prop down to all its rendered components
-  // static router must be given the  current url
-  // note: when a particular page(component) is being rendered server side the life cycle of
-  // that component doesnt execute as we are fetching only the html
-  // only when we send the client js bundle then only the component we
-  // execute like a normal react app,  we can test it by removing the client bundle script
-  // we need to use additional settings to make this behaviour in the server side
-  var content = (0, _server.renderToString)(_react2.default.createElement(
-    _reactRedux.Provider,
-    { store: store },
-    _react2.default.createElement(
-      _reactRouterDom.StaticRouter,
-      { location: req.path, context: context },
-      _react2.default.createElement(
-        "div",
-        null,
-        (0, _reactRouterConfig.renderRoutes)(_Routets2.default)
-      )
-    )
-  ));
-
-  /*
-    add html script tp inject the client bundle js and the state into the html content above
-  */
-  var html = "\n  <html>\n    <head>\n    </head>\n    <body>\n      <div id=\"root\">" + content + "</div>\n      <script>\n        window.INITIAL_STATE=" + (0, _serializeJavascript2.default)(store.getState()) + "\n      </script>\n       <script src=\"bundle.js\"></script>\n    </body>  \n\n  </html>\n  ";
-
-  return html;
-}; // works like JSON stringfy but prevents xss attackks
-// render the react app and return the string
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
-module.exports = require("react-dom/server");
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports) {
-
-module.exports = require("serialize-javascript");
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _redux = __webpack_require__(6);
-
-var _reduxThunk = __webpack_require__(19);
-
-var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
-
-var _axios = __webpack_require__(20);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _reducers = __webpack_require__(21);
-
-var _reducers2 = _interopRequireDefault(_reducers);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = function (req) {
-  var axiosInstance = _axios2.default.create({
-    baseURL: "https://react-ssr-api.herokuapp.com",
-    headers: {
-      cookie: req.get("cookie") || ""
-    }
-  });
-  var store = (0, _redux.createStore)(_reducers2.default, {}, (0, _redux.applyMiddleware)(_reduxThunk2.default.withExtraArgument(axiosInstance)));
-  return store;
-};
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports) {
-
-module.exports = require("redux-thunk");
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports) {
-
-module.exports = require("axios");
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _redux = __webpack_require__(6);
-
-var _userReducers = __webpack_require__(22);
-
-var _userReducers2 = _interopRequireDefault(_userReducers);
-
-var _authReducer = __webpack_require__(23);
-
-var _authReducer2 = _interopRequireDefault(_authReducer);
-
-var _adminReducer = __webpack_require__(25);
-
-var _adminReducer2 = _interopRequireDefault(_adminReducer);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = (0, _redux.combineReducers)({
-  users: _userReducers2.default,
-  auth: _authReducer2.default,
-  admins: _adminReducer2.default
-});
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _actions = __webpack_require__(1);
-
-exports.default = function () {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-  var action = arguments[1];
-
-  switch (action.type) {
-    case _actions.FET_USERS:
-      return action.payload.data;
-
-    default:
-      return state;
-  }
-};
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports.default = function () {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-  var action = arguments[1];
-
-  switch (action.type) {
-    case _actions.FETCH_CURRENT_USER:
-      return action.payload.data || false;
-
-    default:
-      return state;
-  }
-};
-
-var _actions = __webpack_require__(1);
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 //staticCotext is the context passed by static router only available during the server render side
@@ -887,33 +689,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _actions = __webpack_require__(1);
-
-exports.default = function () {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-  var action = arguments[1];
-
-  switch (action.type) {
-    case _actions.FECTH_ADMINS:
-      return action.payload.data;
-
-    default:
-      return state;
-  }
-};
-
-/***/ }),
-/* 26 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -929,11 +705,11 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRedux = __webpack_require__(4);
+var _reactRedux = __webpack_require__(2);
 
 var _actions = __webpack_require__(1);
 
-var _requireAuth = __webpack_require__(27);
+var _requireAuth = __webpack_require__(17);
 
 var _requireAuth2 = _interopRequireDefault(_requireAuth);
 
@@ -1005,7 +781,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 27 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1021,7 +797,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRedux = __webpack_require__(4);
+var _reactRedux = __webpack_require__(2);
 
 var _reactRouterDom = __webpack_require__(3);
 
@@ -1074,6 +850,260 @@ exports.default = function (ChildComponent) {
 
   return (0, _reactRedux.connect)(mapStateToProps)(RequireAuth);
 };
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _server = __webpack_require__(19);
+
+var _reactRouterDom = __webpack_require__(3);
+
+var _reactRedux = __webpack_require__(2);
+
+var _reactRouterConfig = __webpack_require__(4);
+
+var _serializeJavascript = __webpack_require__(20);
+
+var _serializeJavascript2 = _interopRequireDefault(_serializeJavascript);
+
+var _reactHelmet = __webpack_require__(28);
+
+var _Routets = __webpack_require__(5);
+
+var _Routets2 = _interopRequireDefault(_Routets);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// works like JSON stringfy but prevents xss attackks
+// render the react app and return the string
+
+exports.default = function (req, store, context) {
+  /*
+  note: we are sending HTML code and not states and no JS like in normal react apps
+  so we need to hydrate  and have sencond client bundle
+  */
+  // context: will be passed as a prop down to all its rendered components
+  // static router must be given the  current url
+  // note: when a particular page(component) is being rendered server side the life cycle of
+  // that component doesnt execute as we are fetching only the html
+  // only when we send the client js bundle then only the component we
+  // execute like a normal react app,  we can test it by removing the client bundle script
+  // we need to use additional settings to make this behaviour in the server side
+  var content = (0, _server.renderToString)(_react2.default.createElement(
+    _reactRedux.Provider,
+    { store: store },
+    _react2.default.createElement(
+      _reactRouterDom.StaticRouter,
+      { location: req.path, context: context },
+      _react2.default.createElement(
+        "div",
+        null,
+        (0, _reactRouterConfig.renderRoutes)(_Routets2.default)
+      )
+    )
+  ));
+
+  // this helmet comfiguration is for the server side config
+  var helmet = _reactHelmet.Helmet.renderStatic();
+
+  /*
+    add html script tp inject the client bundle js and the state into the html content above
+  */
+  var html = "\n  <html>\n    <head>\n      " + helmet.title.toString() + "\n      " + helmet.meta.toString() + "\n    </head>\n    <body>\n      <div id=\"root\">" + content + "</div>\n      <script>\n        window.INITIAL_STATE=" + (0, _serializeJavascript2.default)(store.getState()) + "\n      </script>\n       <script src=\"bundle.js\"></script>\n    </body>  \n\n  </html>\n  ";
+
+  return html;
+}; // this is used for routing if we do server side data fetching
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports) {
+
+module.exports = require("react-dom/server");
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports) {
+
+module.exports = require("serialize-javascript");
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _redux = __webpack_require__(6);
+
+var _reduxThunk = __webpack_require__(22);
+
+var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
+var _axios = __webpack_require__(23);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _reducers = __webpack_require__(24);
+
+var _reducers2 = _interopRequireDefault(_reducers);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function (req) {
+  var axiosInstance = _axios2.default.create({
+    baseURL: "https://react-ssr-api.herokuapp.com",
+    headers: {
+      cookie: req.get("cookie") || ""
+    }
+  });
+  var store = (0, _redux.createStore)(_reducers2.default, {}, (0, _redux.applyMiddleware)(_reduxThunk2.default.withExtraArgument(axiosInstance)));
+  return store;
+};
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports) {
+
+module.exports = require("redux-thunk");
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports) {
+
+module.exports = require("axios");
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _redux = __webpack_require__(6);
+
+var _userReducers = __webpack_require__(25);
+
+var _userReducers2 = _interopRequireDefault(_userReducers);
+
+var _authReducer = __webpack_require__(26);
+
+var _authReducer2 = _interopRequireDefault(_authReducer);
+
+var _adminReducer = __webpack_require__(27);
+
+var _adminReducer2 = _interopRequireDefault(_adminReducer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = (0, _redux.combineReducers)({
+  users: _userReducers2.default,
+  auth: _authReducer2.default,
+  admins: _adminReducer2.default
+});
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _actions = __webpack_require__(1);
+
+exports.default = function () {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  var action = arguments[1];
+
+  switch (action.type) {
+    case _actions.FET_USERS:
+      return action.payload.data;
+
+    default:
+      return state;
+  }
+};
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.default = function () {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+  var action = arguments[1];
+
+  switch (action.type) {
+    case _actions.FETCH_CURRENT_USER:
+      return action.payload.data || false;
+
+    default:
+      return state;
+  }
+};
+
+var _actions = __webpack_require__(1);
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _actions = __webpack_require__(1);
+
+exports.default = function () {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  var action = arguments[1];
+
+  switch (action.type) {
+    case _actions.FECTH_ADMINS:
+      return action.payload.data;
+
+    default:
+      return state;
+  }
+};
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports) {
+
+module.exports = require("react-helmet");
 
 /***/ })
 /******/ ]);

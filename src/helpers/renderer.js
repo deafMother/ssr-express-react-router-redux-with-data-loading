@@ -6,6 +6,8 @@ import { StaticRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { renderRoutes } from "react-router-config"; // this is used for routing if we do server side data fetching
 import serialize from "serialize-javascript"; // works like JSON stringfy but prevents xss attackks
+import { Helmet } from "react-helmet";
+
 import Routes from "../client/Routets";
 
 export default (req, store, context) => {
@@ -28,12 +30,17 @@ export default (req, store, context) => {
     </Provider>
   );
 
+  // this helmet comfiguration is for the server side config
+  const helmet = Helmet.renderStatic();
+
   /*
     add html script tp inject the client bundle js and the state into the html content above
   */
   const html = `
   <html>
     <head>
+      ${helmet.title.toString()}
+      ${helmet.meta.toString()}
     </head>
     <body>
       <div id="root">${content}</div>
