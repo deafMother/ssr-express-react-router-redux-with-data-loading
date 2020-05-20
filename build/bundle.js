@@ -155,6 +155,41 @@ var fetchCurrentUser = exports.fetchCurrentUser = function fetchCurrentUser() {
   }();
 };
 
+var FECTH_ADMINS = exports.FECTH_ADMINS = "fetch_admins";
+
+var fetchAdmins = exports.fetchAdmins = function fetchAdmins() {
+  return function () {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(dispatch, getSate, api) {
+      var res;
+      return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              _context3.next = 2;
+              return api.get("/admins");
+
+            case 2:
+              res = _context3.sent;
+
+              dispatch({
+                type: FECTH_ADMINS,
+                payload: res
+              });
+
+            case 4:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3, undefined);
+    }));
+
+    return function (_x7, _x8, _x9) {
+      return _ref3.apply(this, arguments);
+    };
+  }();
+};
+
 /***/ }),
 /* 2 */
 /***/ (function(module, exports) {
@@ -206,6 +241,10 @@ var _NotFoundPage = __webpack_require__(24);
 
 var _NotFoundPage2 = _interopRequireDefault(_NotFoundPage);
 
+var _AdminPage = __webpack_require__(26);
+
+var _AdminPage2 = _interopRequireDefault(_AdminPage);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // a we are using server side data loading
@@ -218,7 +257,9 @@ exports.default = [_extends({}, _App2.default, { // the app will always  be disp
     exact: true
   }), _extends({
     path: "/users"
-  }, _UsersListPage2.default), _extends({}, _NotFoundPage2.default)]
+  }, _UsersListPage2.default), _extends({
+    path: "/admins"
+  }, _AdminPage2.default), _extends({}, _NotFoundPage2.default)]
 })];
 
 /***/ }),
@@ -290,18 +331,27 @@ app.get("*", function (req, res) {
 
     // run the load data function for every component where it is defined
     return route.loadData ? route.loadData(store) : null;
+  }).map(function (promise) {
+    if (promise) {
+      return new Promise(function (resolve, reject) {
+        promise.then(resolve).catch(resolve);
+      });
+    }
   });
 
   Promise.all(promises).then(function () {
     // after all the data loading functions are finished we render the  components
     var context = {};
     var content = (0, _renderer2.default)(req, store, context);
+    if (context.url) {
+      return res.redirect(301, context.url);
+    }
     // context is send to the rendered component as a prop and any changes there will be avaiable here
     if (context.notFound) {
       res.status(404);
     }
     res.send(content);
-  });
+  }); // if can attect a catch to handle errors
 });
 
 app.listen(3000, function () {
@@ -737,11 +787,16 @@ var _authReducer = __webpack_require__(23);
 
 var _authReducer2 = _interopRequireDefault(_authReducer);
 
+var _adminReducer = __webpack_require__(25);
+
+var _adminReducer2 = _interopRequireDefault(_adminReducer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = (0, _redux.combineReducers)({
   users: _userReducers2.default,
-  auth: _authReducer2.default
+  auth: _authReducer2.default,
+  admins: _adminReducer2.default
 });
 
 /***/ }),
@@ -829,6 +884,195 @@ var NotFoundPage = function NotFoundPage(_ref) {
 
 exports.default = {
   component: NotFoundPage
+};
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _actions = __webpack_require__(1);
+
+exports.default = function () {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  var action = arguments[1];
+
+  switch (action.type) {
+    case _actions.FECTH_ADMINS:
+      return action.payload.data;
+
+    default:
+      return state;
+  }
+};
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__(4);
+
+var _actions = __webpack_require__(1);
+
+var _requireAuth = __webpack_require__(27);
+
+var _requireAuth2 = _interopRequireDefault(_requireAuth);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var AdminList = function (_Component) {
+  _inherits(AdminList, _Component);
+
+  function AdminList() {
+    _classCallCheck(this, AdminList);
+
+    return _possibleConstructorReturn(this, (AdminList.__proto__ || Object.getPrototypeOf(AdminList)).apply(this, arguments));
+  }
+
+  _createClass(AdminList, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.props.fetchAdmins();
+    }
+  }, {
+    key: "renderAdmins",
+    value: function renderAdmins() {
+      return this.props.admins.map(function (admin) {
+        return _react2.default.createElement(
+          "li",
+          { key: admin.id },
+          admin.name
+        );
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react2.default.createElement(
+        "div",
+        null,
+        "Here's a list of admins",
+        _react2.default.createElement(
+          "ul",
+          null,
+          this.renderAdmins()
+        )
+      );
+    }
+  }]);
+
+  return AdminList;
+}(_react.Component);
+
+function mapStateToProps(state) {
+  return { admins: state.admins };
+}
+
+// function for data loading in server side
+// will not be used in the client nundle js
+function loadData(store) {
+  return store.dispatch((0, _actions.fetchAdmins)());
+}
+
+exports.default = {
+  component: (0, _reactRedux.connect)(mapStateToProps, { fetchAdmins: _actions.fetchAdmins })((0, _requireAuth2.default)(AdminList)),
+  loadData: loadData
+};
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__(4);
+
+var _reactRouterDom = __webpack_require__(3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } //  this hoc will check  the auth state i.e if the user is signed in or not
+
+exports.default = function (ChildComponent) {
+  var RequireAuth = function (_Component) {
+    _inherits(RequireAuth, _Component);
+
+    function RequireAuth() {
+      _classCallCheck(this, RequireAuth);
+
+      return _possibleConstructorReturn(this, (RequireAuth.__proto__ || Object.getPrototypeOf(RequireAuth)).apply(this, arguments));
+    }
+
+    _createClass(RequireAuth, [{
+      key: "render",
+      value: function render() {
+        switch (this.props.auth) {
+          case false:
+            // in the server side once we redirect we need to handle it in the static router  to redirect
+            return _react2.default.createElement(_reactRouterDom.Redirect, { to: "/" });
+          case null:
+            return _react2.default.createElement(
+              "div",
+              null,
+              "Loading..."
+            );
+
+          default:
+            return _react2.default.createElement(ChildComponent, this.props);
+        }
+      }
+    }]);
+
+    return RequireAuth;
+  }(_react.Component);
+
+  function mapStateToProps(_ref) {
+    var auth = _ref.auth;
+
+    return { auth: auth };
+  }
+
+  return (0, _reactRedux.connect)(mapStateToProps)(RequireAuth);
 };
 
 /***/ })

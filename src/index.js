@@ -36,21 +36,32 @@ app.get("*", (req, res) => {
   const store = createStore(req);
 
   // some logic to initialize and load data into the store
-  const promises = matchRoutes(Routes, req.path).map(({ route }) => {
-    // run the load data function for every component where it is defined
-    return route.loadData ? route.loadData(store) : null;
-  });
+  const promises = matchRoutes(Routes, req.path)
+    .map(({ route }) => {
+      // run the load data function for every component where it is defined
+      return route.loadData ? route.loadData(store) : null;
+    })
+    .map((promise) => {
+      if (promise) {
+        return new Promise((resolve, reject) => {
+          promise.then(resolve).catch(resolve);
+        });
+      }
+    });
 
   Promise.all(promises).then(() => {
     // after all the data loading functions are finished we render the  components
     const context = {};
     const content = renderer(req, store, context);
+    if (context.url) {
+      return res.redirect(301, context.url);
+    }
     // context is send to the rendered component as a prop and any changes there will be avaiable here
     if (context.notFound) {
       res.status(404);
     }
     res.send(content);
-  });
+  }); // if can attect a catch to handle errors
 });
 
 app.listen(3000, () => {

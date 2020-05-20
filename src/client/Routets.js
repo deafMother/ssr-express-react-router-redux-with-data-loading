@@ -4,6 +4,7 @@ import App from "./App";
 import HomePage from "./pages/HomePage";
 import UsersListPage from "./pages/UsersListPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import AdminPage from "./pages/AdminPage";
 
 // a we are using server side data loading
 // so we must use an array of paths and not the traditional react router approach
@@ -20,6 +21,10 @@ export default [
       {
         path: "/users",
         ...UsersListPage,
+      },
+      {
+        path: "/admins",
+        ...AdminPage,
       },
       {
         ...NotFoundPage, // if unknown path is requested then this component will be served

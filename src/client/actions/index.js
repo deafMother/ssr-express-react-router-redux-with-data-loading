@@ -20,3 +20,13 @@ export const fetchCurrentUser = () => async (dispatch, getSate, api) => {
     payload: res,
   });
 };
+
+export const FECTH_ADMINS = "fetch_admins";
+
+export const fetchAdmins = () => async (dispatch, getSate, api) => {
+  const res = await api.get("/admins");
+  dispatch({
+    type: FECTH_ADMINS,
+    payload: res,
+  });
+};
