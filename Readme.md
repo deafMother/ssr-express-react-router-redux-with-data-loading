@@ -138,7 +138,7 @@
 ## twelve (handling unkonwn routes and errors)
 
 - > handle errors and redirect on errors
-- > make an hoc in client side to detect login, in server we need to use redirect
+- > make an hoc in client side to detect login, in server we need to use redirect: when we redirect in react the static router adds a property(url) into the context object, we can use this to redirect the server to that url
 
 ## thirteen (adding meta tags for better SEO)
 
